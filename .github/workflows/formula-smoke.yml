@@ -56,11 +56,22 @@ jobs:
             echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
           fi
 
-      - name: Install from the checked-out formula
-        run: brew install --formula ./Formula/zfb.rb
+      # Homebrew refuses `brew install ./Formula/zfb.rb` outright — "Homebrew
+      # requires formulae to be in a tap". So point a real tap at this
+      # checkout: that installs the code under test rather than whatever is
+      # currently published, which keeps this honest if the repo ever grows a
+      # pull-request flow.
+      - name: Tap this checkout
+        run: |
+          set -euo pipefail
+          brew tap takazudo/tap "$GITHUB_WORKSPACE"
+          brew tap
+
+      - name: Install zfb from the tap
+        run: brew install takazudo/tap/zfb
 
       - name: Run the formula's own test block
-        run: brew test zfb
+        run: brew test takazudo/tap/zfb
 
       - name: Assert --version matches the formula
         run: |
