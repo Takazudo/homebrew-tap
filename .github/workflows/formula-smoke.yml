@@ -44,7 +44,11 @@ jobs:
       # the others.
       fail-fast: false
       matrix:
-        os: [macos-latest, macos-13, ubuntu-latest]
+        # macos-15-intel, not macos-13: the macOS 13 image was retired
+        # 2025-12-04, so a job asking for it now queues forever instead of
+        # failing. macos-15-intel is the last x86_64 macOS image Actions will
+        # offer — it goes away in Fall 2027, taking Intel CI coverage with it.
+        os: [macos-latest, macos-15-intel, ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v4
